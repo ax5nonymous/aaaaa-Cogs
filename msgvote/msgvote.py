@@ -227,14 +227,11 @@ class MsgVote(commands.Cog):
         if age > await self.config.guild(message.guild).duration():
             return
         # We have a valid vote so we can count the votes now
-        upvotes = 0
         dnvotes = 0
         for react in message.reactions:
-            if react.emoji == up_emoji:
-                upvotes = react.count
-            elif react.emoji == dn_emoji:
+            if react.emoji == dn_emoji:
                 dnvotes = react.count
-        if dnvotes >= await self.config.guild(message.guild).threshold():
+        if dnvotes > await self.config.guild(message.guild).threshold():
             try:
                 await message.delete()
             except discord.errors.Forbidden:
