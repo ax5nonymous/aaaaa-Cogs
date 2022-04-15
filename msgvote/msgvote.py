@@ -145,17 +145,19 @@ class MsgVote(commands.Cog):
 
     @msgvote.command(name="threshold")
     async def _msgvote_threshold(self, ctx, threshold: int):
-        """Set the threshold of [downvotes - upvotes] for msg deletion.
+        """Set the threshold of downvotes for msg deletion.
         Must be a positive integer. Or, set to 0 to disable deletion."""
 
-        if threshold == 0:
+        if threshold < 0:
+            await ctx.send("Invalid threshold. Must be a positive integer, or 0 to disable.")
+        elif threshold == 0:
             await self.config.guild(ctx.guild).threshold.set(threshold)
             await ctx.send("Message deletion disabled.")
         else:
             await self.config.guild(ctx.guild).threshold.set(threshold)
             await ctx.send(
-                "Messages will be deleted if [downvotes - "
-                "upvotes] reaches {}.".format(threshold)
+                "Messages will be deleted if downvotes"
+                " reach {}.".format(threshold)
             )
 
     def fix_custom_emoji(self, emoji):
@@ -232,7 +234,7 @@ class MsgVote(commands.Cog):
                 upvotes = react.count
             elif react.emoji == dn_emoji:
                 dnvotes = react.count
-        if (dnvotes - upvotes) >= await self.config.guild(message.guild).threshold():
+        if (dnvotes) >= await self.config.guild(message.guild).threshold():
             try:
                 await message.delete()
             except discord.errors.Forbidden:
