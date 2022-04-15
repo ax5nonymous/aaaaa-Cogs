@@ -234,7 +234,7 @@ class MsgVote(commands.Cog):
                 upvotes = react.count
             elif react.emoji == dn_emoji:
                 dnvotes = react.count
-        if (dnvotes) >= await self.config.guild(message.guild).threshold():
+        if dnvotes >= await self.config.guild(message.guild).threshold():
             try:
                 await message.delete()
             except discord.errors.Forbidden:
